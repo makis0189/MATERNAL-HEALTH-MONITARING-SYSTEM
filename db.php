@@ -29,7 +29,7 @@ $host   = getenv('DB_HOST') ?: 'mysql.railway.internal';
 $user   = getenv('DB_USER') ?: 'root';
 $pass   = getenv('DB_PASS') ?: 'iYbjrCXVEjmVaXcpJvwsHxEJsTSxodpS';
 $dbname = getenv('DB_NAME') ?: 'maternal_health_db';
-$port = getenv('MYSQLPORT') ?: 3306;
+$port = getenv('MYSQLPORT') ?: 54030;
 
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
 
