@@ -6,22 +6,21 @@ RUN docker-php-ext-install mysqli
 # Enable .htaccess support
 RUN a2enmod rewrite
 
-# Fix "More than one MPM loaded" (seen on some hosts, incl. Railway):
-# force prefork, which is the MPM required by mod_php.
-RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
-    && a2enmod mpm_prefork
-
-# Make the default VirtualHost match any port. This means we only
-# ever need to touch ports.conf at container start, never this file.
+# Make the default VirtualHost match any port, so ports.conf is the
+# only file we need to touch at runtime.
 RUN sed -i 's/\*:80/\*:*/' /etc/apache2/sites-enabled/000-default.conf
 
 COPY . /var/www/html/
 
-# At container start, bind Apache to Railway's dynamic $PORT.
-# This OVERWRITES ports.conf (rather than find/replace) so it's
-# safe to run on every restart, even if the same container/filesystem
-# is reused — no risk of compounding/corrupting the file over time.
-RUN printf '#!/bin/bash\nset -e\necho "Listen ${PORT:-80}" > /etc/apache2/ports.conf\nexec apache2-foreground\n' > /entrypoint.sh \
+# At container start:
+#  1. Force-disable any threaded MPMs and remove their leftover
+#     symlinks (fixes "More than one MPM loaded" seen on some hosts),
+#     then enable prefork, which mod_php requires.
+#  2. Bind Apache to Railway's dynamic $PORT by overwriting (not
+#     editing) ports.conf, safe to run on every restart.
+#  3. Test the config (apache2ctl -t) so any remaining issue prints
+#     a clear message in the logs instead of a silent crash.
+RUN printf '#!/bin/bash\nset -e\na2dismod mpm_event mpm_worker 2>/dev/null || true\nrm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* 2>/dev/null || true\na2enmod mpm_prefork 2>/dev/null || true\necho "Listen ${PORT:-80}" > /etc/apache2/ports.conf\napache2ctl -t\nexec apache2-foreground\n' > /entrypoint.sh \
     && chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
