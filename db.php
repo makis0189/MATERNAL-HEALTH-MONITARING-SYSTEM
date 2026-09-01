@@ -25,10 +25,11 @@ function loadEnv($path) {
 
 loadEnv(__DIR__ . '/.env');
 
-$host   = getenv('DB_HOST') ?: 'localhost';
+$host   = getenv('DB_HOST') ?: 'mysql.railway.internal';
 $user   = getenv('DB_USER') ?: 'root';
-$pass   = getenv('DB_PASS') ?: '';
+$pass   = getenv('DB_PASS') ?: 'iYbjrCXVEjmVaXcpJvwsHxEJsTSxodpS';
 $dbname = getenv('DB_NAME') ?: 'maternal_health_db';
+$port = getenv('MYSQLPORT') ?: 3306;
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 
