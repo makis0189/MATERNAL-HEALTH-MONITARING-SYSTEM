@@ -142,7 +142,7 @@ $Highrisk_count= $high_row['total'];
 
 <aside class="home logout-btn">
 <i class="fa-solid fa-right-from-bracket"></i>
-<button class="home logout-btn"  href="logout.php">Logout</button>
+<a href="logout.php">Logout</a>
 </aside>
 </div>
 
