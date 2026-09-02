@@ -30,7 +30,7 @@ function loadEnv($path) {
 
 loadEnv(__DIR__ . '/.env');
 
-$host   = getenv('DB_HOST') ?: 'mysql.railway.internal';
+$host   = getenv('DB_HOST') ?: 'trolley.proxy.rlwy.net';
 $user   = getenv('DB_USER') ?: 'root';
 $pass   = getenv('DB_PASS') ?: 'iYbjrCXVEjmVaXcpJvwsHxEJsTSxodpS';
 $dbname = getenv('DB_NAME') ?: 'maternal_health_db';
