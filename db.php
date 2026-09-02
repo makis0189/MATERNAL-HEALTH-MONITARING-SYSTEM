@@ -36,7 +36,7 @@ $pass   = getenv('DB_PASS') ?: 'iYbjrCXVEjmVaXcpJvwsHxEJsTSxodpS';
 $dbname = getenv('DB_NAME') ?: 'maternal_health_db';
 $port   = getenv('DB_PORT') ?: 54030;
 
-$conn = new mysqli($host, $user, $pass, $dbname, (int)$port);
+$conn = new mysqli($host, $user, $pass, $dbname, $port);
 
 if ($conn->connect_error) {
     die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
