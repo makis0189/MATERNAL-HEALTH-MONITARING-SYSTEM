@@ -45,139 +45,139 @@ $Highrisk_count= $high_row['total'];
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Dashboard | MHS</title>
-    <link rel="icon" type="image" href="ICON.jpeg">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard | MHS</title>
+<link rel="icon" type="image" href="ICON.jpeg">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
     
-    <button class="toggle-btn" id="toggleBtn">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <div class="wrapper">
-        <div class="dash" id="sidebar">
-            <span>
-                <img src="LOGO MHS.jpeg" alt="Logo">
-                <h2>Maternal Health<br> System</h2>
-            </span>
+<button class="toggle-btn" id="toggleBtn">
+<i class="fa-solid fa-bars"></i>
+</button>
+<div class="wrapper">
+<div class="dash" id="sidebar">
+<span>
+<img src="LOGO MHS.jpeg" alt="Logo">
+<h2>Maternal Health<br> System</h2>
+</span>
+    
+<aside class="home active" data-target="dashboardContent">
+<i class="fa-solid fa-house"></i>
+<a href="#">Dashboard</a>
+</aside>
+    
+<?php if (canSee('patient')): ?>
+<aside class="home" data-target="patientContent">
+<i class="fa-solid fa-bed-pulse"></i>
+<a href="#">Patients</a>
+</aside>
+<?php endif; ?>
 
-            <aside class="home active" data-target="dashboardContent">
-                <i class="fa-solid fa-house"></i>
-                <a href="#">Dashboard</a>
-            </aside>
+<?php if (canSee('appointment')): ?>
+<aside class="home" data-target="appointmentContent">
+<i class="fa-solid fa-calendar"></i>
+<a href="#">Appointment</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('patient')): ?>
-            <aside class="home" data-target="patientContent">
-                <i class="fa-solid fa-bed-pulse"></i>
-                <a href="#">Patients</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('antenatal')): ?>
+<aside class="home" id="antenatalBtn" data-target="antenatalContent">
+<i class="fa-solid fa-person-pregnant"></i>
+<a href="#">Antenatal Care</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('appointment')): ?>
-            <aside class="home" data-target="appointmentContent">
-                <i class="fa-solid fa-calendar"></i>
-                <a href="#">Appointment</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('postnatal')): ?>
+<aside class="home" id="postnatalBtn" data-target="postnatalContent">
+<i class="fa-solid fa-baby"></i>
+<a href="#">Postnatal Care</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('antenatal')): ?>
-             <aside class="home" id="antenatalBtn" data-target="antenatalContent">
-                <i class="fa-solid fa-person-pregnant"></i>
-                <a href="#">Antenatal Care</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('immunization')): ?>
+<aside class="home" id="immunazationBtn" data-target="immunizationContent">
+<i class="fa-solid fa-syringe"></i>
+<a href="#">Immunization</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('postnatal')): ?>
-            <aside class="home" id="postnatalBtn" data-target="postnatalContent">
-                <i class="fa-solid fa-baby"></i>
-                <a href="#">Postnatal Care</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('high')): ?>
+<aside class="home" id="highBtn" data-target="highContent">
+<i class="fa-solid fa-gauge-simple-high"></i>
+<a href="#">High Risk Cases</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('immunization')): ?>
-            <aside class="home" id="immunazationBtn" data-target="immunizationContent">
-                <i class="fa-solid fa-syringe"></i>
-                <a href="#">Immunization</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('report')): ?>
+<aside class="home" id="reportBtn" data-target="reportContent">
+<i class="fa-solid fa-newspaper"></i>
+<a href="#">Reports</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('high')): ?>
-            <aside class="home" id="highBtn" data-target="highContent">
-                <i class="fa-solid fa-gauge-simple-high"></i>
-                <a href="#">High Risk Cases</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('message')): ?>
+<aside class="home" id="messageBtn" data-target="messageContent">
+<i class="fa-regular fa-message"></i>
+<a href="#">Messages</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('report')): ?>
-            <aside class="home" id="reportBtn" data-target="reportContent">
-                <i class="fa-solid fa-newspaper"></i>
-                <a href="#">Reports</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('education')): ?>
+<aside class="home" id="educationBtn" data-target="educationContent">
+<i class="fa-solid fa-prescription-bottle-medical"></i>
+<a href="#">Health Education</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('message')): ?>
-            <aside class="home" id="messageBtn" data-target="messageContent">
-                <i class="fa-regular fa-message"></i>
-                <a href="#">Messages</a>
-            </aside>
-            <?php endif; ?>
+<?php if (canSee('users')): ?>
+<aside class="home" id="usersBtn" data-target="usersContent">
+<i class="fa-solid fa-users-gear"></i>
+<a href="#">Manage Users</a>
+</aside>
+<?php endif; ?>
 
-            <?php if (canSee('education')): ?>
-            <aside class="home" id="educationBtn" data-target="educationContent">
-                <i class="fa-solid fa-prescription-bottle-medical"></i>
-                <a href="#">Health Education</a>
-            </aside>
-            <?php endif; ?>
+<aside class="home logout-btn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<a href="logout.php">Logout</a>
+</aside>
+</div>
 
-            <?php if (canSee('users')): ?>
-            <aside class="home" id="usersBtn" data-target="usersContent">
-                <i class="fa-solid fa-users-gear"></i>
-                <a href="#">Manage Users</a>
-            </aside>
-            <?php endif; ?>
-
-            <aside class="home logout-btn">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <a href="logout.php">Logout</a>
-            </aside>
-            </div>
-
-        <main class="main-content" id="dashboardContent" style="display: block;">
-            <h1>Dashboard</h1>
-            <p>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>! <span style="color:#888; font-size:0.85em;">(<?php echo htmlspecialchars(currentRole()); ?>)</span></p>
-            <div class="cards">
-                <div class="card">
-                    <i class="fa-solid fa-bed-pulse"></i>
-                    <h3>Total Patients</h3>
-                    <h2><?php echo $patient_count; ?></h2>
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-calendar"></i>
-                    <h3>Appointments</h3>
-                    <h2><?php echo $appointment_count; ?></h2>
-                </div>
-                 <div class="card">
-                   <i class="fa-solid fa-person-pregnant"></i>
-                    <h3>Antenatal Care</h3>
-                    <h2><?php echo $anc_count; ?></h2>
-                </div>
-                 <div class="card">
-                    <i class="fa-solid fa-baby"></i>
-                    <h3>Postnatal Care</h3>
-                    <h2><?php echo $Postnatal_count; ?></h2>
+<main class="main-content" id="dashboardContent" style="display: block;">
+<h1>Dashboard</h1>
+<p>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>! <span style="color:#888; font-size:0.85em;">(<?php echo htmlspecialchars(currentRole()); ?>)</span></p>
+<div class="cards">
+<div class="card">
+<i class="fa-solid fa-bed-pulse"></i>
+<h3>Total Patients</h3>
+<h2><?php echo $patient_count; ?></h2>
+</div>
+<div class="card">
+<i class="fa-solid fa-calendar"></i>
+<h3>Appointments</h3>
+<h2><?php echo $appointment_count; ?></h2>
+</div>
+<div class="card">
+<i class="fa-solid fa-person-pregnant"></i>
+<h3>Antenatal Care</h3>
+<h2><?php echo $anc_count; ?></h2>
+</div>
+<div class="card">
+<i class="fa-solid fa-baby"></i>
+<h3>Postnatal Care</h3>
+<h2><?php echo $Postnatal_count; ?></h2>
                     
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-gauge-simple-high"></i>
-                    <h3>High Risk Cases</h3>
-                    <h2><?php echo $Highrisk_count; ?></h2>
-                </div>
-            </div>
-        </main>
+</div>
+<div class="card">
+<i class="fa-solid fa-gauge-simple-high"></i>
+<h3>High Risk Cases</h3>
+<h2><?php echo $Highrisk_count; ?></h2>
+</div>
+</div>
+</main>
 
     <?php if (canSee('patient')): ?>
         <main class="main-content" id="patientContent">
