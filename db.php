@@ -1,4 +1,9 @@
 <?php
+/**
+ * Loads key=value pairs from a .env file into getenv()/$_ENV/$_SERVER.
+ * Silently does nothing if the file isn't present (e.g. local XAMPP
+ * setups that don't use one) so the defaults below still apply.
+ */
 function loadEnv($path) {
     if (!file_exists($path)) {
         return;
@@ -7,7 +12,7 @@ function loadEnv($path) {
     foreach ($lines as $line) {
         $line = trim($line);
         if ($line === '' || strpos($line, '#') === 0) {
-            continue; 
+            continue; // skip blank lines and comments
         }
         if (strpos($line, '=') === false) {
             continue;
@@ -25,13 +30,13 @@ function loadEnv($path) {
 
 loadEnv(__DIR__ . '/.env');
 
-$host   = getenv('DB_HOST') ?: 'trolley.proxy.rlwy.net';
+$host   = getenv('DB_HOST') ?: 'localhost';
 $user   = getenv('DB_USER') ?: 'root';
 $pass   = getenv('DB_PASS') ?: 'iYbjrCXVEjmVaXcpJvwsHxEJsTSxodpS';
 $dbname = getenv('DB_NAME') ?: 'maternal_health_db';
-$port = getenv('MYSQLPORT') ?: 54030;
+$port   = getenv('DB_PORT') ?: 54030;
 
-$conn = new mysqli($host, $user, $pass, $dbname, $port);
+$conn = new mysqli($host, $user, $pass, $dbname, (int)$port);
 
 if ($conn->connect_error) {
     die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
