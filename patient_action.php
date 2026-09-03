@@ -16,222 +16,104 @@ $action = $_GET['action'] ?? '';
 // Extra check for write actions — only Nurse passes this.
 $writeActions = ['create', 'update', 'delete'];
 if (in_array($action, $writeActions, true)) {
-requireRoleApi($writeRoles);
+    requireRoleApi($writeRoles);
 }
 
 if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-$patient_id        = trim($_POST['patient_id'] ?? '');
-$full_name         = trim($_POST['full_name'] ?? '');
-$dob               = trim($_POST['dob'] ?? '');
-$phone             = trim($_POST['phone'] ?? '');
-$address           = trim($_POST['address'] ?? '');
-$blood_group       = trim($_POST['blood_group'] ?? '');
-$pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
-$emergency_contact = trim($_POST['emergency_contact'] ?? '');
+    $patient_id        = trim($_POST['patient_id'] ?? '');
+    $full_name         = trim($_POST['full_name'] ?? '');
+    $dob               = trim($_POST['dob'] ?? '');
+    $phone             = trim($_POST['phone'] ?? '');
+    $address           = trim($_POST['address'] ?? '');
+    $blood_group       = trim($_POST['blood_group'] ?? '');
+    $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
+    $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
-if ($patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
-exit();
-}
+    if ($patient_id === '' || $full_name === '' || $phone === '') {
+        echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
+        exit();
+    }
 
-$stmt = $conn->prepare("INSERT INTO patients (patient_id, full_name, dob, phone, address, blood_group, pregnancy_status, emergency_contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssssss", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact);
+    $stmt = $conn->prepare("INSERT INTO patients (patient_id, full_name, dob, phone, address, blood_group, pregnancy_status, emergency_contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssss", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact);
 
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mgonjwa amesajiliwa kikamilifu."]);
-} else {
-error_log("patient create error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusajili mgonjwa."]);
-}
-$stmt->close();
-
-} elseif ($action === 'list') {
-$result = $conn->query("SELECT * FROM patients ORDER BY id DESC");
-$patients = $result->fetch_all(MYSQLI_ASSOC);
-echo json_encode(["status" => "success", "data" => $patients]);
-
-} elseif ($action === 'delete') {
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
-exit();
-}
-
-$stmt = $conn->prepare("DELETE FROM patients WHERE id = ?");
-$stmt->bind_param("i", $id);
-
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya mgonjwa imefutwa."]);
-} else {
-error_log("patient delete error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta rekodi."]);
-}
-$stmt->close();
-
-} elseif ($action === 'get') {
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
-exit();
-}
-
-$stmt = $conn->prepare("SELECT * FROM patients WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($patient = $result->fetch_assoc()) {
-echo json_encode(["status" => "success", "patient" => $patient]);
-} else {
-echo json_encode(["status" => "error", "message" => "Mgonjwa hakupatikana."]);
-}
-$stmt->close();
-
-} elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-$id = intval($_POST['id'] ?? 0);
-$patient_id        = trim($_POST['patient_id'] ?? '');
-$full_name         = trim($_POST['full_name'] ?? '');
-$dob               = trim($_POST['dob'] ?? '');
-$phone             = trim($_POST['phone'] ?? '');
-$address           = trim($_POST['address'] ?? '');
-$blood_group       = trim($_POST['blood_group'] ?? '');
-$pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
-$emergency_contact = trim($_POST['emergency_contact'] ?? '');
-
-if ($id <= 0 || $patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
-exit();
-}
-
-$stmt = $conn->prepare("UPDATE patients SET patient_id=?, full_name=?, dob=?, phone=?, address=?, blood_group=?, pregnancy_status=?, emergency_contact=? WHERE id=?");
-$stmt->bind_param("ssssssssi", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact, $id);
-
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Taarifa za mgonjwa zimesasishwa."]);
-} else {
-error_log("patient update error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha taarifa."]);
-}
-$stmt->close();
-
-} else {
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
-}
-require_once __DIR__ . '/auth_helpers.php';
-header('Content-Type: application/json');
-require_once 'db.php';
-
-// Roles allowed to VIEW (list/get) patient records.
-$viewRoles  = ['Admin', 'Doctor', 'Nurse', 'CHW'];
-// Roles allowed to ADD/EDIT/DELETE patient records — Nurse only.
-$writeRoles = ['Nurse'];
-
-// Baseline check: must at least be allowed to view this module.
-requireRoleApi($viewRoles);
-
-$action = $_GET['action'] ?? '';
-
-// Extra check for write actions — only Nurse passes this.
-$writeActions = ['create', 'update', 'delete'];
-if (in_array($action, $writeActions, true)) {
-requireRoleApi($writeRoles);
-}
-
-if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-$patient_id        = trim($_POST['patient_id'] ?? '');
-$full_name         = trim($_POST['full_name'] ?? '');
-$dob               = trim($_POST['dob'] ?? '');
-$phone             = trim($_POST['phone'] ?? '');
-$address           = trim($_POST['address'] ?? '');
-$blood_group       = trim($_POST['blood_group'] ?? '');
-$pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
-$emergency_contact = trim($_POST['emergency_contact'] ?? '');
-
-if ($patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
-exit();
-}
-
-$stmt = $conn->prepare("INSERT INTO patients (patient_id, full_name, dob, phone, address, blood_group, pregnancy_status, emergency_contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssssss", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact);
-
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mgonjwa amesajiliwa kikamilifu."]);
-} else {
-error_log("patient create error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusajili mgonjwa."]);
-}
-$stmt->close();
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Mgonjwa amesajiliwa kikamilifu."]);
+    } else {
+        error_log("patient create error: " . $conn->error);
+        echo json_encode(["status" => "error", "message" => "Imeshindikana kusajili mgonjwa."]);
+    }
+    $stmt->close();
 
 } elseif ($action === 'list') {
-$result = $conn->query("SELECT * FROM patients ORDER BY id DESC");
-$patients = $result->fetch_all(MYSQLI_ASSOC);
-echo json_encode(["status" => "success", "data" => $patients]);
+    $result = $conn->query("SELECT * FROM patients ORDER BY id DESC");
+    $patients = $result->fetch_all(MYSQLI_ASSOC);
+    echo json_encode(["status" => "success", "data" => $patients]);
 
 } elseif ($action === 'delete') {
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
-exit();
-}
+    $id = intval($_GET['id'] ?? 0);
+    if ($id <= 0) {
+        echo json_encode(["status" => "error", "message" => "ID batili."]);
+        exit();
+    }
 
-$stmt = $conn->prepare("DELETE FROM patients WHERE id = ?");
-$stmt->bind_param("i", $id);
+    $stmt = $conn->prepare("DELETE FROM patients WHERE id = ?");
+    $stmt->bind_param("i", $id);
 
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya mgonjwa imefutwa."]);
-} else {
-error_log("patient delete error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta rekodi."]);
-}
-$stmt->close();
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Rekodi ya mgonjwa imefutwa."]);
+    } else {
+        error_log("patient delete error: " . $conn->error);
+        echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta rekodi."]);
+    }
+    $stmt->close();
 
 } elseif ($action === 'get') {
-$id = intval($_GET['id'] ?? 0);
-if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
-exit();
-}
+    $id = intval($_GET['id'] ?? 0);
+    if ($id <= 0) {
+        echo json_encode(["status" => "error", "message" => "ID batili."]);
+        exit();
+    }
 
-$stmt = $conn->prepare("SELECT * FROM patients WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt = $conn->prepare("SELECT * FROM patients WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-if ($patient = $result->fetch_assoc()) {
-echo json_encode(["status" => "success", "patient" => $patient]);
-} else {
-echo json_encode(["status" => "error", "message" => "Mgonjwa hakupatikana."]);
-}
-$stmt->close();
+    if ($patient = $result->fetch_assoc()) {
+        echo json_encode(["status" => "success", "patient" => $patient]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Mgonjwa hakupatikana."]);
+    }
+    $stmt->close();
 
 } elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-$id = intval($_POST['id'] ?? 0);
-$patient_id        = trim($_POST['patient_id'] ?? '');
-$full_name         = trim($_POST['full_name'] ?? '');
-$dob               = trim($_POST['dob'] ?? '');
-$phone             = trim($_POST['phone'] ?? '');
-$address           = trim($_POST['address'] ?? '');
-$blood_group       = trim($_POST['blood_group'] ?? '');
-$pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
-$emergency_contact = trim($_POST['emergency_contact'] ?? '');
+    $id = intval($_POST['id'] ?? 0);
+    $patient_id        = trim($_POST['patient_id'] ?? '');
+    $full_name         = trim($_POST['full_name'] ?? '');
+    $dob               = trim($_POST['dob'] ?? '');
+    $phone             = trim($_POST['phone'] ?? '');
+    $address           = trim($_POST['address'] ?? '');
+    $blood_group       = trim($_POST['blood_group'] ?? '');
+    $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
+    $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
-if ($id <= 0 || $patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
-exit();
-}
+    if ($id <= 0 || $patient_id === '' || $full_name === '' || $phone === '') {
+        echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
+        exit();
+    }
 
-$stmt = $conn->prepare("UPDATE patients SET patient_id=?, full_name=?, dob=?, phone=?, address=?, blood_group=?, pregnancy_status=?, emergency_contact=? WHERE id=?");
-$stmt->bind_param("ssssssssi", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact, $id);
+    $stmt = $conn->prepare("UPDATE patients SET patient_id=?, full_name=?, dob=?, phone=?, address=?, blood_group=?, pregnancy_status=?, emergency_contact=? WHERE id=?");
+    $stmt->bind_param("ssssssssi", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact, $id);
 
-if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Taarifa za mgonjwa zimesasishwa."]);
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Taarifa za mgonjwa zimesasishwa."]);
+    } else {
+        error_log("patient update error: " . $conn->error);
+        echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha taarifa."]);
+    }
+    $stmt->close();
+
 } else {
-error_log("patient update error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha taarifa."]);
-}
-$stmt->close();
-
-} else {
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+    echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
 }
