@@ -4,9 +4,19 @@ require_once 'db.php';
 require_once __DIR__ . '/risk_assessment.php';
 header('Content-Type: application/json');
 
-requireRoleApi(['Admin', 'Doctor', 'Nurse']);
+$viewRoles = ['Admin', 'Doctor', 'Nurse'];
+
+$writeRoles = ['Nurse'];
+
+requireRoleApi($viewRoles);
 
 $action = $_GET['action'] ?? '';
+
+$writeAction = ['create', 'update','delete'];
+if (in_array($action, $writeActions, true)) {
+    requireRoleApi($writeRoles);
+
+}
 
 switch ($action) {
     case 'create':
