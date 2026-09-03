@@ -215,7 +215,7 @@ error_log("deleteAnc error: " . $conn->error);
 echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
 }
 $stmt->close();
-}<?php
+}
 require_once __DIR__ . '/auth_helpers.php';
 require_once 'db.php';
 require_once __DIR__ . '/risk_assessment.php';
