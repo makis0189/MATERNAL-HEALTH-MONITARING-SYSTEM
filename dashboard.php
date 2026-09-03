@@ -3,27 +3,47 @@ require_once __DIR__ . '/auth_helpers.php';
 require_once 'db.php';
 
 if (!isset($_SESSION['user_id'])) {
-header("Location: index.php");
-exit();
+    header("Location: index.php");
+    exit();
 }
 
 //  Role-Based Access Control (RBAC) 
-$MODULE_WRITE_ROLES = [
-'patient'      => ['Nurse'],
-'appointment'  => [],           // hakuna mwandishi kwa sasa
-'antenatal'    => ['Nurse'],
-'postnatal'    => ['Nurse'],
-'immunization' => [],           // hakuna mwandishi kwa sasa
-'high'         => ['Nurse'],
-'message'      => [],           // hakuna mwandishi kwa sasa
-'education'    => [],           // hakuna mwandishi kwa sasa
-'users'        => ['Admin'],    // Admin anabaki na uwezo kamili hapa
+$MODULE_ROLES = [
+    'patient'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+    'appointment'  => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+    'antenatal'    => ['Admin', 'Doctor', 'Nurse'],
+    'postnatal'    => ['Admin', 'Doctor', 'Nurse'],
+    'immunization' => ['Admin', 'Doctor', 'Nurse'],
+    'high'         => ['Admin', 'Doctor', 'Nurse'],
+    'report'       => ['Admin', 'Doctor', 'Manager'],
+    'message'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+    'education'    => ['Admin', 'Doctor', 'Nurse'],
+    'users'        => ['Admin'],
 ];
 
+// Roles allowed to ADD/EDIT/DELETE per module (view-only otherwise).
+$MODULE_WRITE_ROLES = [
+    'patient'      => ['Nurse'],
+    'appointment'  => [],           // hakuna mwandishi kwa sasa
+    'antenatal'    => ['Nurse'],
+    'postnatal'    => ['Nurse'],
+    'immunization' => [],           // hakuna mwandishi kwa sasa
+    'high'         => ['Nurse'],
+    'message'      => [],           // hakuna mwandishi kwa sasa
+    'education'    => [],           // hakuna mwandishi kwa sasa
+    'users'        => ['Admin'],    // Admin anabaki na uwezo kamili hapa
+];
+
+function canSee($module) {
+    global $MODULE_ROLES;
+    if (!isset($MODULE_ROLES[$module])) return false;
+    return in_array(currentRole(), $MODULE_ROLES[$module], true);
+}
+
 function canWrite($module) {
-global $MODULE_WRITE_ROLES;
-if (!isset($MODULE_WRITE_ROLES[$module])) return false;
-return in_array(currentRole(), $MODULE_WRITE_ROLES[$module], true);
+    global $MODULE_WRITE_ROLES;
+    if (!isset($MODULE_WRITE_ROLES[$module])) return false;
+    return in_array(currentRole(), $MODULE_WRITE_ROLES[$module], true);
 }
 
 $patient_count = $conn->query("SELECT COUNT(*) AS total FROM patients")->fetch_assoc()['total'];
@@ -408,7 +428,7 @@ Save Appointment
 <h1>Antenatal Care</h1>
 <p>Manage pregnancy and ANC visits</p>
 </div>
-<?php if (canWrite('antenatal care')): ?>
+<?php if (canWrite('antenatal')): ?>
 <button class="add-btn" id="addAncBtn">
 <i class="fa-solid fa-plus"></i>
 New ANC Visit
@@ -534,7 +554,7 @@ Save ANC Visit
 <h1>Postnatal Care</h1>
 <p>Manage mother and baby after delivery</p>
 </div>
-<?php if (canWrite('postnatal care')): ?>
+<?php if (canWrite('postnatal')): ?>
 <button class="add-btn" id="addPncBtn">
 <i class="fa-solid fa-plus"></i>
 New PNC Record
@@ -695,7 +715,7 @@ Save Record
 <h1>Immunization</h1>
 <p>Manage vaccinations for mothers and babies</p>
 </div>
-<?php if(canWrite('immunazation')): ?>
+<?php if (canWrite('immunization')): ?>
 <button class="add-btn" id="addImmBtn">
 <i class="fa-solid fa-plus"></i>
 New Vaccination
@@ -819,7 +839,7 @@ Save Record
 <h1>High Risk Cases</h1>
 <p>Monitor and manage high-risk maternal patients</p>
 </div>
-<?php if(canWrite('high risk cases')): ?>
+<?php if (canWrite('high')): ?>
 <button class="add-btn" id="addHighBtn">
 <i class="fa-solid fa-plus"></i>
 Add High Risk Case
@@ -1060,7 +1080,7 @@ Save Case
 <h1>Messages</h1>
 <p>Manage communication between staff and patients</p>
 </div>
-<?php if(canWrite('messages')): ?>
+<?php if (canWrite('message')): ?>
 <button class="add-btn" id="addMsgBtn">
 <i class="fa-solid fa-plus"></i>
 New Message
@@ -1150,7 +1170,7 @@ Send Message
 <h1>Health Education</h1>
 <p>Provide guidance and education to mothers</p>
 </div>
-<?php if(canWrite('health education')): ?>
+<?php if (canWrite('education')): ?>
 <button class="add-btn" id="addEduBtn">
 <i class="fa-solid fa-plus"></i>
 Add Topic
@@ -1247,10 +1267,12 @@ Save Topic
 <p>Add and manage staff accounts and their roles</p>
 </div>
 
+<?php if (canWrite('users')): ?>
 <button class="add-btn" id="addUserBtn">
 <i class="fa-solid fa-plus"></i>
 New User
 </button>
+<?php endif; ?>
 
 </div>
 
@@ -1360,7 +1382,6 @@ education: <?php echo canWrite('education') ? 'true' : 'false'; ?>,
 users: <?php echo canWrite('users') ? 'true' : 'false'; ?>
 };
 </script>
-<script src="dashboard.js"></script>
 <script src="dashboard.js"></script>
 <script src="auth.js"></script>
 </body>
