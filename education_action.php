@@ -3,9 +3,18 @@ require_once __DIR__ . '/auth_helpers.php';
 require_once 'db.php';
 header('Content-Type: application/json');
 
-requireRoleApi(['Admin', 'Doctor', 'Nurse']);
+$viewRoles = ['Admin', 'Doctor', 'Nurse'];
+
+$writeRoles = ['Doctor'];
+
+requireRoleApi($viewRoles);
 
 $action = $_GET['action'] ?? '';
+
+$writeActions = ['create', 'update', 'delete'];
+if (in_array($action, $writeActions, true)) {
+    requireRoleApi($writeRoles);
+}
 
 switch ($action) {
     case 'create':
