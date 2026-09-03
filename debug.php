@@ -9,12 +9,12 @@ echo "DB_PASS is set: " . (getenv('DB_PASS') ? 'yes' : 'no') . "\n";
 
 echo "\n--- All DB_ related env vars ---\n";
 foreach ($_ENV as $k => $v) {
-    if (stripos($k, 'DB_') === 0 || stripos($k, 'MYSQL') === 0) {
-        echo "$k = [$v]\n";
-    }
+if (stripos($k, 'DB_') === 0 || stripos($k, 'MYSQL') === 0) {
+echo "$k = [$v]\n";
+}
 }
 foreach ($_SERVER as $k => $v) {
-    if ((stripos($k, 'DB_') === 0 || stripos($k, 'MYSQL') === 0) && !isset($_ENV[$k])) {
-        echo "$k = [$v] (from \$_SERVER)\n";
-    }
+if ((stripos($k, 'DB_') === 0 || stripos($k, 'MYSQL') === 0) && !isset($_ENV[$k])) {
+echo "$k = [$v] (from \$_SERVER)\n";
+}
 }
