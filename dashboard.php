@@ -3,47 +3,47 @@ require_once __DIR__ . '/auth_helpers.php';
 require_once 'db.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
+header("Location: index.php");
+exit();
 }
 
 //  Role-Based Access Control (RBAC) 
 $MODULE_ROLES = [
-    'patient'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
-    'appointment'  => ['Admin', 'Doctor', 'Nurse', 'CHW'],
-    'antenatal'    => ['Admin', 'Doctor', 'Nurse'],
-    'postnatal'    => ['Admin', 'Doctor', 'Nurse'],
-    'immunization' => ['Admin', 'Doctor', 'Nurse'],
-    'high'         => ['Admin', 'Doctor', 'Nurse'],
-    'report'       => ['Admin', 'Doctor', 'Manager'],
-    'message'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
-    'education'    => ['Admin', 'Doctor', 'Nurse'],
-    'users'        => ['Admin'],
+'patient'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+'appointment'  => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+'antenatal'    => ['Admin', 'Doctor', 'Nurse'],
+'postnatal'    => ['Admin', 'Doctor', 'Nurse'],
+'immunization' => ['Admin', 'Doctor', 'Nurse'],
+'high'         => ['Admin', 'Doctor', 'Nurse'],
+'report'       => ['Admin', 'Doctor', 'Manager'],
+'message'      => ['Admin', 'Doctor', 'Nurse', 'CHW'],
+'education'    => ['Admin', 'Doctor', 'Nurse'],
+'users'        => ['Admin'],
 ];
 
 // Roles allowed to ADD/EDIT/DELETE per module (view-only otherwise).
 $MODULE_WRITE_ROLES = [
-    'patient'      => ['Nurse'],
-    'appointment'  => [],           // hakuna mwandishi kwa sasa
-    'antenatal'    => ['Nurse'],
-    'postnatal'    => ['Nurse'],
-    'immunization' => [],           // hakuna mwandishi kwa sasa
-    'high'         => ['Nurse'],
-    'message'      => [],           // hakuna mwandishi kwa sasa
-    'education'    => [],           // hakuna mwandishi kwa sasa
-    'users'        => ['Admin'],    // Admin anabaki na uwezo kamili hapa
+'patient'      => ['Nurse'],
+'appointment'  => [],           // hakuna mwandishi kwa sasa
+'antenatal'    => ['Nurse'],
+'postnatal'    => ['Nurse'],
+'immunization' => [],           // hakuna mwandishi kwa sasa
+'high'         => ['Nurse'],
+'message'      => [],           // hakuna mwandishi kwa sasa
+'education'    => [],           // hakuna mwandishi kwa sasa
+'users'        => ['Admin'],    // Admin anabaki na uwezo kamili hapa
 ];
 
 function canSee($module) {
-    global $MODULE_ROLES;
-    if (!isset($MODULE_ROLES[$module])) return false;
-    return in_array(currentRole(), $MODULE_ROLES[$module], true);
+global $MODULE_ROLES;
+if (!isset($MODULE_ROLES[$module])) return false;
+return in_array(currentRole(), $MODULE_ROLES[$module], true);
 }
 
 function canWrite($module) {
-    global $MODULE_WRITE_ROLES;
-    if (!isset($MODULE_WRITE_ROLES[$module])) return false;
-    return in_array(currentRole(), $MODULE_WRITE_ROLES[$module], true);
+global $MODULE_WRITE_ROLES;
+if (!isset($MODULE_WRITE_ROLES[$module])) return false;
+return in_array(currentRole(), $MODULE_WRITE_ROLES[$module], true);
 }
 
 $patient_count = $conn->query("SELECT COUNT(*) AS total FROM patients")->fetch_assoc()['total'];
