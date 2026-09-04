@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 $viewRoles = ['Admin', 'Doctor', 'Nurse', 'CHW'];
 
 // Doctor is view-only system-wide now — no role currently assigned to write here.
-$writeRoles = [];
+$writeRoles = ['Nurse'];
 requireRoleApi($viewRoles);
 
 $action = $_GET['action'] ?? '';
