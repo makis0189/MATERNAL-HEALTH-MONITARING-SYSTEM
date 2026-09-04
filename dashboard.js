@@ -1,8 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-// ---- Usalama: zuia XSS kwa kufunika data yoyote inayotoka database
-// kabla ya kuiweka ndani ya innerHTML. Namba za id (zinazotumika kwenye
-// onclick) HAZIFUNIKWI kwa makusudi - zinatoka database kama namba tupu.
 function escapeHTML(str) {
 if (str === null || str === undefined) return "";
 return String(str)
@@ -12,11 +8,6 @@ return String(str)
 .replace(/"/g, "&quot;")
 .replace(/'/g, "&#39;");
 }
-
-// ---- RBAC: tengeneza vitufe vya Edit/Delete TU kama role ina ruhusa
-// ya kuandika kwenye moduli husika (window.MHS_PERMISSIONS, iliyowekwa
-// na dashboard.php kutoka kwa canWrite()). Kama hakuna ruhusa, badala
-// ya vitufe inaonyesha "View only".
 function actionButtonsHTML(moduleKey, id, editFnName, deleteFnName) {
 const perms = window.MHS_PERMISSIONS || {};
 if (!perms[moduleKey]) {
