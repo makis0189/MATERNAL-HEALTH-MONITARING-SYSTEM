@@ -24,13 +24,13 @@ $MODULE_ROLES = [
 // Roles allowed to ADD/EDIT/DELETE per module (view-only otherwise).
 $MODULE_WRITE_ROLES = [
 'patient'      => ['Nurse'],
-'appointment'  => ['Nurse'],           // hakuna mwandishi kwa sasa
+'appointment'  => ['Doctor'],           // hakuna mwandishi kwa sasa
 'antenatal'    => ['Nurse'],
 'postnatal'    => ['Nurse'],
-'immunization' => ['Nurse'],           // hakuna mwandishi kwa sasa
+'immunization' => ['Doctor'],           // hakuna mwandishi kwa sasa
 'high'         => ['Nurse'],
 'message'      => ['Nurse'],           // hakuna mwandishi kwa sasa
-'education'    => ['Nurse'],           // hakuna mwandishi kwa sasa
+'education'    => ['Doctor'],           // hakuna mwandishi kwa sasa
 'users'        => ['Admin'],    // Admin anabaki na uwezo kamili hapa
 ];
 
