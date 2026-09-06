@@ -32,7 +32,7 @@ case 'delete':
 deleteHighRisk($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createHighRisk($conn) {
@@ -44,7 +44,7 @@ $followup_date     = trim($_POST['followup_date'] ?? '');
 $status            = trim($_POST['status'] ?? 'Monitoring');
 
 if ($patient_name === '' || $risk_level === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mgonjwa na kiwango cha hatari."]);
+echo json_encode(["status" => "error", "message" => "Please enter name of patient and Risk level."]);
 return;
 }
 
@@ -55,10 +55,10 @@ $stmt = $conn->prepare("INSERT INTO high_risk_cases (patient_name, gestational_w
 $stmt->bind_param("ssssss", $patient_name, $gestational_weeks, $risk_level, $risk_factor, $followup_date, $status);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Kesi ya hatari kubwa imehifadhiwa."]);
+echo json_encode(["status" => "success", "message" => "High-risk cases saved."]);
 } else {
 error_log("createHighRisk error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi."]);
+echo json_encode(["status" => "error", "message" => "Failed to store."]);
 }
 $stmt->close();
 }
@@ -77,7 +77,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getHighRisk($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -90,7 +90,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Rekodi haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Record not Found."]);
 }
 }
 
@@ -104,7 +104,7 @@ $followup_date     = trim($_POST['followup_date'] ?? '');
 $status            = trim($_POST['status'] ?? 'Monitoring');
 
 if ($id <= 0 || $patient_name === '' || $risk_level === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mgonjwa na kiwango cha hatari."]);
+echo json_encode(["status" => "error", "message" => "Please enter name of patient and Risk level."]);
 return;
 }
 
@@ -115,10 +115,10 @@ $stmt = $conn->prepare("UPDATE high_risk_cases SET patient_name=?, gestational_w
 $stmt->bind_param("ssssssi", $patient_name, $gestational_weeks, $risk_level, $risk_factor, $followup_date, $status, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Kesi imesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Case updated."]);
 } else {
 error_log("updateHighRisk error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 }
 $stmt->close();
 }
@@ -126,16 +126,16 @@ $stmt->close();
 function deleteHighRisk($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM high_risk_cases WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Kesi imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Case Deleted."]);
 } else {
 error_log("deleteHighRisk error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete."]);
 }
 $stmt->close();
 }
