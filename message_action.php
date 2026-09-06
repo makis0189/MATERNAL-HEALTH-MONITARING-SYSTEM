@@ -33,7 +33,7 @@ case 'delete':
 deleteMessage($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createMessage($conn) {
@@ -43,7 +43,7 @@ $message  = trim($_POST['message'] ?? '');
 $status   = 'Sent';
 
 if ($receiver === '' || $subject === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza mpokeaji na kichwa cha ujumbe."]);
+echo json_encode(["status" => "error", "message" => "Please enter the recipient and subject."]);
 return;
 }
 
@@ -51,10 +51,10 @@ $stmt = $conn->prepare("INSERT INTO messages (receiver, subject, message, status
 $stmt->bind_param("ssss", $receiver, $subject, $message, $status);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Ujumbe umetumwa."]);
+echo json_encode(["status" => "success", "message" => "Message sent."]);
 } else {
 error_log("createMessage error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kutuma ujumbe."]);
+echo json_encode(["status" => "error", "message" => "Failed to send Message."]);
 }
 $stmt->close();
 }
@@ -73,7 +73,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getMessage($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -86,7 +86,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Ujumbe haukupatikana."]);
+echo json_encode(["status" => "error", "message" => "Message not Found."]);
 }
 }
 
@@ -97,11 +97,11 @@ $subject  = trim($_POST['subject'] ?? '');
 $message  = trim($_POST['message'] ?? '');
 
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 if ($receiver === '' || $subject === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza mpokeaji na kichwa cha ujumbe."]);
+echo json_encode(["status" => "error", "message" => "Please enter the recipient and subject."]);
 return;
 }
 
@@ -109,10 +109,10 @@ $stmt = $conn->prepare("UPDATE messages SET receiver=?, subject=?, message=? WHE
 $stmt->bind_param("sssi", $receiver, $subject, $message, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Ujumbe umesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Message updated."]);
 } else {
 error_log("updateMessage error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 }
 $stmt->close();
 }
@@ -120,16 +120,16 @@ $stmt->close();
 function deleteMessage($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM messages WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Ujumbe umefutwa."]);
+echo json_encode(["status" => "success", "message" => "Message Deleted."]);
 } else {
 error_log("deleteMessage error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete."]);
 }
 $stmt->close();
 }
