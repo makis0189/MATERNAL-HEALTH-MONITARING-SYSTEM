@@ -33,7 +33,7 @@ case 'delete':
 deleteAppointment($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createAppointment($conn) {
@@ -44,7 +44,7 @@ $service          = trim($_POST['service'] ?? '');
 $status           = trim($_POST['status'] ?? 'Pending');
 
 if ($patient_name === '' || $appointment_date === '' || $appointment_time === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mgonjwa, tarehe na muda."]);
+echo json_encode(["status" => "error", "message" => "Please enter name of patient, Date and Time."]);
 return;
 }
 
@@ -52,10 +52,10 @@ $stmt = $conn->prepare("INSERT INTO appointments (patient_name, appointment_date
 $stmt->bind_param("sssss", $patient_name, $appointment_date, $appointment_time, $service, $status);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Miadi imehifadhiwa kikamilifu."]);
+echo json_encode(["status" => "success", "message" => "Appointment successfully saved."]);
 } else {
 error_log("createAppointment error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi miadi."]);
+echo json_encode(["status" => "error", "message" => "Failed to store appointment."]);
 }
 $stmt->close();
 }
@@ -87,7 +87,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "appointment" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Miadi haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Appointment not found."]);
 }
 }
 
@@ -100,7 +100,7 @@ $service          = trim($_POST['service'] ?? '');
 $status           = trim($_POST['status'] ?? 'Pending');
 
 if ($id <= 0 || $patient_name === '' || $appointment_date === '' || $appointment_time === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza taarifa zote muhimu."]);
+echo json_encode(["status" => "error", "message" => "Please enter all important detail."]);
 return;
 }
 
@@ -108,10 +108,10 @@ $stmt = $conn->prepare("UPDATE appointments SET patient_name = ?, appointment_da
 $stmt->bind_param("sssssi", $patient_name, $appointment_date, $appointment_time, $service, $status, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Miadi imesasishwa kikamilifu."]);
+echo json_encode(["status" => "success", "message" => "Appointment successfully updated."]);
 } else {
 error_log("updateAppointment error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha miadi."]);
+echo json_encode(["status" => "error", "message" => "Failed to update Appointment."]);
 }
 $stmt->close();
 }
@@ -119,16 +119,16 @@ $stmt->close();
 function deleteAppointment($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM appointments WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Miadi imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Appointment Deleted."]);
 } else {
 error_log("deleteAppointment error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta miadi."]);
+echo json_encode(["status" => "error", "message" => "Failed to delete Appointment."]);
 }
 $stmt->close();
 }
