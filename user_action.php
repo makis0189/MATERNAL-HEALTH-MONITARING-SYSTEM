@@ -26,7 +26,7 @@ switch ($action) {
         deleteUser($conn);
         break;
     default:
-        echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+        echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createUser($conn) {
@@ -38,19 +38,19 @@ function createUser($conn) {
     $role      = trim($_POST['role'] ?? '');
 
     if ($full_name === '' || $email === '' || $password === '' || $role === '') {
-        echo json_encode(["status" => "error", "message" => "Tafadhali jaza taarifa zote."]);
+        echo json_encode(["status" => "error", "message" => "Please fill all information."]);
         return;
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["status" => "error", "message" => "Barua pepe si sahihi."]);
+        echo json_encode(["status" => "error", "message" => "Email is Invalid."]);
         return;
     }
     if (strlen($password) < 8) {
-        echo json_encode(["status" => "error", "message" => "Password lazima iwe na herufi angalau 8."]);
+        echo json_encode(["status" => "error", "message" => "Password must contain at least 8 characters."]);
         return;
     }
     if (!in_array($role, $VALID_ROLES, true)) {
-        echo json_encode(["status" => "error", "message" => "Role si sahihi."]);
+        echo json_encode(["status" => "error", "message" => "Invalid Role."]);
         return;
     }
 
@@ -59,7 +59,7 @@ function createUser($conn) {
     $checkStmt->execute();
     if ($checkStmt->get_result()->num_rows > 0) {
         $checkStmt->close();
-        echo json_encode(["status" => "error", "message" => "Barua pepe hii tayari imesajiliwa."]);
+        echo json_encode(["status" => "error", "message" => "This email is already registered."]);
         return;
     }
     $checkStmt->close();
@@ -69,10 +69,10 @@ function createUser($conn) {
     $stmt->bind_param("ssss", $full_name, $email, $hashed, $role);
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "success", "message" => "Mtumiaji ameongezwa kikamilifu."]);
+        echo json_encode(["status" => "success", "message" => "User added successfully."]);
     } else {
         error_log("createUser error: " . $conn->error);
-        echo json_encode(["status" => "error", "message" => "Imeshindikana kuongeza mtumiaji."]);
+        echo json_encode(["status" => "error", "message" => "Unable to add user."]);
     }
     $stmt->close();
 }
@@ -91,7 +91,7 @@ function listUsers($conn) {
 function getUser($conn) {
     $id = intval($_GET['id'] ?? 0);
     if ($id <= 0) {
-        echo json_encode(["status" => "error", "message" => "ID batili."]);
+        echo json_encode(["status" => "error", "message" => "Invalid ID."]);
         return;
     }
     $stmt = $conn->prepare("SELECT id, full_name, email, role, is_active FROM users WHERE id = ?");
@@ -103,7 +103,7 @@ function getUser($conn) {
     if ($row) {
         echo json_encode(["status" => "success", "record" => $row]);
     } else {
-        echo json_encode(["status" => "error", "message" => "Mtumiaji hakupatikana."]);
+        echo json_encode(["status" => "error", "message" => "User not Found."]);
     }
 }
 
@@ -118,19 +118,19 @@ function updateUser($conn) {
     $password  = trim($_POST['password'] ?? ''); // hiari - ikiwa tupu, password haibadiliki
 
     if ($id <= 0 || $full_name === '' || $email === '' || $role === '') {
-        echo json_encode(["status" => "error", "message" => "Tafadhali jaza taarifa zote."]);
+        echo json_encode(["status" => "error", "message" => "Please fill all information."]);
         return;
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["status" => "error", "message" => "Barua pepe si sahihi."]);
+        echo json_encode(["status" => "error", "message" => "Email is Invalid."]);
         return;
     }
     if (!in_array($role, $VALID_ROLES, true)) {
-        echo json_encode(["status" => "error", "message" => "Role si sahihi."]);
+        echo json_encode(["status" => "error", "message" => "Invalid Role."]);
         return;
     }
     if ($password !== '' && strlen($password) < 8) {
-        echo json_encode(["status" => "error", "message" => "Password mpya lazima iwe na herufi angalau 8."]);
+        echo json_encode(["status" => "error", "message" => "New password must be at least 8 characters long."]);
         return;
     }
 
@@ -138,11 +138,11 @@ function updateUser($conn) {
     // kuwa role isiyo Admin, wala asijizime (deactivate) mwenyewe.
     if ($id === (int) $_SESSION['user_id']) {
         if ($role !== 'Admin') {
-            echo json_encode(["status" => "error", "message" => "Huwezi kubadilisha role ya akaunti yako mwenyewe kutoka Admin."]);
+            echo json_encode(["status" => "error", "message" => "You cannot modify your own admnistrator role."]);
             return;
         }
         if ($is_active !== 1) {
-            echo json_encode(["status" => "error", "message" => "Huwezi kuzima (deactivate) akaunti yako mwenyewe."]);
+            echo json_encode(["status" => "error", "message" => "You are unable to deactivate your own account."]);
             return;
         }
     }
@@ -152,7 +152,7 @@ function updateUser($conn) {
     $checkStmt->execute();
     if ($checkStmt->get_result()->num_rows > 0) {
         $checkStmt->close();
-        echo json_encode(["status" => "error", "message" => "Barua pepe hii tayari inatumiwa na mtumiaji mwingine."]);
+        echo json_encode(["status" => "error", "message" => "This email is already used by another user."]);
         return;
     }
     $checkStmt->close();
@@ -167,10 +167,10 @@ function updateUser($conn) {
     }
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "success", "message" => "Mtumiaji amesasishwa kikamilifu."]);
+        echo json_encode(["status" => "success", "message" => "User successfully updated."]);
     } else {
         error_log("updateUser error: " . $conn->error);
-        echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha mtumiaji."]);
+        echo json_encode(["status" => "error", "message" => "Failed to update user."]);
     }
     $stmt->close();
 }
@@ -178,22 +178,22 @@ function updateUser($conn) {
 function deleteUser($conn) {
     $id = intval($_GET['id'] ?? 0);
     if ($id <= 0) {
-        echo json_encode(["status" => "error", "message" => "ID batili."]);
+        echo json_encode(["status" => "error", "message" => "Invalid ID."]);
         return;
     }
 
     if ($id === (int) $_SESSION['user_id']) {
-        echo json_encode(["status" => "error", "message" => "Huwezi kufuta akaunti yako mwenyewe."]);
+        echo json_encode(["status" => "error", "message" => "You are unable to delete your own account."]);
         return;
     }
 
     $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
     $stmt->bind_param("i", $id);
     if ($stmt->execute()) {
-        echo json_encode(["status" => "success", "message" => "Mtumiaji amefutwa."]);
+        echo json_encode(["status" => "success", "message" => "User Deleted."]);
     } else {
         error_log("deleteUser error: " . $conn->error);
-        echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta mtumiaji."]);
+        echo json_encode(["status" => "error", "message" => "Failed to delete user."]);
     }
     $stmt->close();
 }
