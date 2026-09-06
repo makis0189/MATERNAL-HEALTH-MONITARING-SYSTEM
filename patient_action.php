@@ -30,7 +30,7 @@ $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
 $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
 if ($patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
+echo json_encode(["status" => "error", "message" => "Please enter the patient ID, full name, and phone number."]);
 exit();
 }
 
@@ -38,10 +38,10 @@ $stmt = $conn->prepare("INSERT INTO patients (patient_id, full_name, dob, phone,
 $stmt->bind_param("ssssssss", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mgonjwa amesajiliwa kikamilifu."]);
+echo json_encode(["status" => "success", "message" => "Patient registered succefully."]);
 } else {
 error_log("patient create error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusajili mgonjwa."]);
+echo json_encode(["status" => "error", "message" => "Failed to register patient."]);
 }
 $stmt->close();
 
@@ -53,7 +53,7 @@ echo json_encode(["status" => "success", "data" => $patients]);
 } elseif ($action === 'delete') {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 exit();
 }
 
@@ -61,17 +61,17 @@ $stmt = $conn->prepare("DELETE FROM patients WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya mgonjwa imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Record of patient Deleted."]);
 } else {
 error_log("patient delete error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta rekodi."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete Record."]);
 }
 $stmt->close();
 
 } elseif ($action === 'get') {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 exit();
 }
 
@@ -83,7 +83,7 @@ $result = $stmt->get_result();
 if ($patient = $result->fetch_assoc()) {
 echo json_encode(["status" => "success", "patient" => $patient]);
 } else {
-echo json_encode(["status" => "error", "message" => "Mgonjwa hakupatikana."]);
+echo json_encode(["status" => "error", "message" => "Patient not Found."]);
 }
 $stmt->close();
 
@@ -99,7 +99,7 @@ $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
 $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
 if ($id <= 0 || $patient_id === '' || $full_name === '' || $phone === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza Patient ID, jina kamili na namba ya simu."]);
+echo json_encode(["status" => "error", "message" => "Please enter the patient ID, full name, and phone number."]);
 exit();
 }
 
@@ -107,13 +107,13 @@ $stmt = $conn->prepare("UPDATE patients SET patient_id=?, full_name=?, dob=?, ph
 $stmt->bind_param("ssssssssi", $patient_id, $full_name, $dob, $phone, $address, $blood_group, $pregnancy_status, $emergency_contact, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Taarifa za mgonjwa zimesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Patient information successfully updated."]);
 } else {
 error_log("patient update error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha taarifa."]);
+echo json_encode(["status" => "error", "message" => "Failed to update information."]);
 }
 $stmt->close();
 
 } else {
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
