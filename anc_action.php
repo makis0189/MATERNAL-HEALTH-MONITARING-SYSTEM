@@ -34,14 +34,14 @@ case 'delete':
 deleteAnc($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function flagHighRiskCase($conn, $patient_name, $gestational_weeks, $risk_reasons) {
 $followup_date = date('Y-m-d', strtotime('+7 days'));
 $risk_factor = implode('; ', $risk_reasons);
 if ($risk_factor === '') {
-$risk_factor = 'Imegundulika na mfumo kutokana na vipimo vya ANC.';
+$risk_factor = 'Detected by the system based on ANC test result.';
 }
 
 $checkStmt = $conn->prepare("SELECT id FROM high_risk_cases WHERE patient_name = ? AND status != 'Recovered' ORDER BY id DESC LIMIT 1");
@@ -75,7 +75,7 @@ $temperature       = trim($_POST['temperature'] ?? '');
 $fetal_heart_rate  = trim($_POST['fetal_heart_rate'] ?? '');
 
 if ($patient_name === '' || $lmp_date === '' || $edd_date === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mgonjwa, LMP na EDD."]);
+echo json_encode(["status" => "error", "message" => "Please enter name of patient, LMP na EDD."]);
 return;
 }
 
@@ -103,7 +103,7 @@ $riskAlert = true;
 
 echo json_encode([
 "status"       => "success",
-"message"      => "Taarifa za ANC zimehifadhiwa.",
+"message"      => "ANC records have been stored.",
 "patient_name" => $patient_name,
 "risk_level"   => $risk_level,
 "risk_reasons" => $assessment['reasons'],
@@ -111,7 +111,7 @@ echo json_encode([
 ]);
 } else {
 error_log("createAnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi."]);
+echo json_encode(["status" => "error", "message" => "Failed to save."]);
 $stmt->close();
 }
 }
@@ -130,7 +130,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getAnc($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -143,7 +143,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Rekodi haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Record not found."]);
 }
 }
 
@@ -159,7 +159,7 @@ $temperature       = trim($_POST['temperature'] ?? '');
 $fetal_heart_rate  = trim($_POST['fetal_heart_rate'] ?? '');
 
 if ($id <= 0 || $patient_name === '' || $lmp_date === '' || $edd_date === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mgonjwa, LMP na EDD."]);
+echo json_encode(["status" => "error", "message" => "Please enter name of patient, LMP na EDD."]);
 return;
 }
 
@@ -187,7 +187,7 @@ $riskAlert = true;
 
 echo json_encode([
 "status"       => "success",
-"message"      => "Taarifa za ANC zimesasishwa.",
+"message"      => "ANC records have been updated.",
 "patient_name" => $patient_name,
 "risk_level"   => $risk_level,
 "risk_reasons" => $assessment['reasons'],
@@ -195,7 +195,7 @@ echo json_encode([
 ]);
 } else {
 error_log("updateAnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 $stmt->close();
 }
 }
@@ -203,16 +203,16 @@ $stmt->close();
 function deleteAnc($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM antenatal_care WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya ANC imefutwa."]);
+echo json_encode(["status" => "success", "message" => "ANC records Deleted."]);
 } else {
 error_log("deleteAnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete."]);
 }
 $stmt->close();
 }
