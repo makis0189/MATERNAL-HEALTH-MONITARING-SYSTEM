@@ -13,12 +13,12 @@ return isset($_SESSION['user_id']);
 function requireRoleApi(array $allowedRoles) {
 if (!isLoggedIn()) {
 http_response_code(403);
-echo json_encode(["status" => "error", "message" => "Session imeisha. Tafadhali ingia tena."]);
+echo json_encode(["status" => "error", "message" => "Session finished. Please enter again."]);
 exit();
 }
 if (!in_array(currentRole(), $allowedRoles, true)) {
 http_response_code(403);
-echo json_encode(["status" => "error", "message" => "Huna ruhusa ya kufanya kitendo hiki."]);
+echo json_encode(["status" => "error", "message" => "Access denied."]);
 exit();
 }
 }
@@ -30,7 +30,7 @@ exit();
 }
 if (!in_array(currentRole(), $allowedRoles, true)) {
 http_response_code(403);
-echo "Huna ruhusa ya kufikia ukurasa huu.";
+echo "You are not authorized to access this page.";
 exit();
 }
 }
