@@ -34,7 +34,7 @@ case 'delete':
 deleteEducation($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createEducation($conn) {
@@ -43,7 +43,7 @@ $category    = trim($_POST['category'] ?? '');
 $description = trim($_POST['description'] ?? '');
 
 if ($title === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza kichwa cha mada."]);
+echo json_encode(["status" => "error", "message" => "Please enter title of the topic."]);
 return;
 }
 
@@ -51,10 +51,10 @@ $stmt = $conn->prepare("INSERT INTO health_education (title, category, descripti
 $stmt->bind_param("sss", $title, $category, $description);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mada imehifadhiwa."]);
+echo json_encode(["status" => "success", "message" => "Topic stored."]);
 } else {
 error_log("createEducation error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi."]);
+echo json_encode(["status" => "error", "message" => "Failed to store."]);
 }
 $stmt->close();
 }
@@ -73,7 +73,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getEducation($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -86,7 +86,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Mada haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Topic not found."]);
 }
 }
 
@@ -97,7 +97,7 @@ $category    = trim($_POST['category'] ?? '');
 $description = trim($_POST['description'] ?? '');
 
 if ($id <= 0 || $title === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza kichwa cha mada."]);
+echo json_encode(["status" => "error", "message" => "Please enter title of topic."]);
 return;
 }
 
@@ -105,10 +105,10 @@ $stmt = $conn->prepare("UPDATE health_education SET title=?, category=?, descrip
 $stmt->bind_param("sssi", $title, $category, $description, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mada imesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Topic updated."]);
 } else {
 error_log("updateEducation error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 }
 $stmt->close();
 }
@@ -116,16 +116,16 @@ $stmt->close();
 function deleteEducation($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM health_education WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Mada imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Topic deleted."]);
 } else {
 error_log("deleteEducation error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to delete."]);
 }
 $stmt->close();
 }
