@@ -32,7 +32,7 @@ case 'delete':
 deletePnc($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomrehensible."]);
 }
 
 function createPnc($conn) {
@@ -50,7 +50,7 @@ $birth_weight     = trim($_POST['birth_weight'] ?? '');
 $feeding          = trim($_POST['feeding'] ?? '');
 
 if ($mother_name === '' || $delivery_date === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mama na tarehe ya kujifungua."]);
+echo json_encode(["status" => "error", "message" => "Please enter the mother's name and date of Delivery."]);
 return;
 }
 
@@ -61,10 +61,10 @@ $stmt = $conn->prepare("INSERT INTO postnatal_care (mother_name, father_name, de
 $stmt->bind_param("ssssssssssss", $mother_name, $father_name, $delivery_date, $delivery_method, $mother_condition, $blood_pressure, $temperature, $bleeding, $baby_name, $baby_sex, $birth_weight, $feeding);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya baada ya kujifungua imehifadhiwa."]);
+echo json_encode(["status" => "success", "message" => "Postnatal record saved successfully."]);
 } else {
 error_log("createPnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi."]);
+echo json_encode(["status" => "error", "message" => "Failed to store."]);
 }
 $stmt->close();
 }
@@ -83,7 +83,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getPnc($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -96,7 +96,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Rekodi haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Record not Found."]);
 }
 }
 
@@ -116,7 +116,7 @@ $birth_weight     = trim($_POST['birth_weight'] ?? '');
 $feeding          = trim($_POST['feeding'] ?? '');
 
 if ($id <= 0 || $mother_name === '' || $delivery_date === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina la mama na tarehe ya kujifungua."]);
+echo json_encode(["status" => "error", "message" => "Please enter the mother's name and date of Delivery."]);
 return;
 }
 
@@ -127,10 +127,10 @@ $stmt = $conn->prepare("UPDATE postnatal_care SET mother_name=?, father_name=?, 
 $stmt->bind_param("ssssssssssssi", $mother_name, $father_name, $delivery_date, $delivery_method, $mother_condition, $blood_pressure, $temperature, $bleeding, $baby_name, $baby_sex, $birth_weight, $feeding, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi imesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Record updated successfully."]);
 } else {
 error_log("updatePnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 }
 $stmt->close();
 }
@@ -138,16 +138,16 @@ $stmt->close();
 function deletePnc($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM postnatal_care WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Record Deleted."]);
 } else {
 error_log("deletePnc error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete."]);
 }
 $stmt->close();
 }
