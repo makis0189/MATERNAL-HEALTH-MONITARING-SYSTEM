@@ -167,7 +167,7 @@ $Highrisk_count= $high_row['total'];
 
 <main class="main-content" id="dashboardContent" style="display: block;">
 <h1>Dashboard</h1>
-<p>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>! <span style="color:#888; font-size:0.85em;">(<?php echo htmlspecialchars(currentRole()); ?>)</span></p>
+<p style="background:red;">Welcome back, <?php echo htmlspecialchars($_SESSION['user_name']); ?>! <span style="color:#888; font-size:0.85em;">(<?php echo htmlspecialchars(currentRole()); ?>)</span></p>
 <div class="cards">
 <div class="card">
 <i class="fa-solid fa-bed-pulse"></i>
