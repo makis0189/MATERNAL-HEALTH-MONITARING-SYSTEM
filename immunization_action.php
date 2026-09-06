@@ -32,7 +32,7 @@ case 'delete':
 deleteImmunization($conn);
 break;
 default:
-echo json_encode(["status" => "error", "message" => "Kitendo hakieleweki."]);
+echo json_encode(["status" => "error", "message" => "The action is incomprehensible."]);
 }
 
 function createImmunization($conn) {
@@ -44,7 +44,7 @@ $next_due_date = trim($_POST['next_due_date'] ?? '');
 $status        = trim($_POST['status'] ?? 'Given');
 
 if ($patient_name === '' || $vaccine === '' || $date_given === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina, chanjo na tarehe iliyotolewa."]);
+echo json_encode(["status" => "error", "message" => "Please enter the name, vaccination, and date issued."]);
 return;
 }
 
@@ -55,10 +55,10 @@ $stmt = $conn->prepare("INSERT INTO immunizations (patient_name, vaccine, dose, 
 $stmt->bind_param("ssssss", $patient_name, $vaccine, $dose, $date_given, $next_due_date, $status);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya chanjo imehifadhiwa."]);
+echo json_encode(["status" => "success", "message" => "Vaccination record has been saved."]);
 } else {
 error_log("createImmunization error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kuhifadhi."]);
+echo json_encode(["status" => "error", "message" => "Failed to store."]);
 }
 $stmt->close();
 }
@@ -77,7 +77,7 @@ echo json_encode(["status" => "success", "data" => $data]);
 function getImmunization($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 
@@ -90,7 +90,7 @@ $stmt->close();
 if ($row) {
 echo json_encode(["status" => "success", "record" => $row]);
 } else {
-echo json_encode(["status" => "error", "message" => "Rekodi haikupatikana."]);
+echo json_encode(["status" => "error", "message" => "Record not Found."]);
 }
 }
 
@@ -104,7 +104,7 @@ $next_due_date = trim($_POST['next_due_date'] ?? '');
 $status        = trim($_POST['status'] ?? 'Given');
 
 if ($id <= 0 || $patient_name === '' || $vaccine === '' || $date_given === '') {
-echo json_encode(["status" => "error", "message" => "Tafadhali jaza jina, chanjo na tarehe iliyotolewa."]);
+echo json_encode(["status" => "error", "message" => "Please enter the name, vaccination, and date issued."]);
 return;
 }
 
@@ -115,10 +115,10 @@ $stmt = $conn->prepare("UPDATE immunizations SET patient_name=?, vaccine=?, dose
 $stmt->bind_param("ssssssi", $patient_name, $vaccine, $dose, $date_given, $next_due_date, $status, $id);
 
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya chanjo imesasishwa."]);
+echo json_encode(["status" => "success", "message" => "Vaccination record updated."]);
 } else {
 error_log("updateImmunization error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kusasisha."]);
+echo json_encode(["status" => "error", "message" => "Failed to update."]);
 }
 $stmt->close();
 }
@@ -126,16 +126,16 @@ $stmt->close();
 function deleteImmunization($conn) {
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
-echo json_encode(["status" => "error", "message" => "ID batili."]);
+echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 return;
 }
 $stmt = $conn->prepare("DELETE FROM immunizations WHERE id = ?");
 $stmt->bind_param("i", $id);
 if ($stmt->execute()) {
-echo json_encode(["status" => "success", "message" => "Rekodi ya chanjo imefutwa."]);
+echo json_encode(["status" => "success", "message" => "Vaccinatiion record Deleted."]);
 } else {
 error_log("deleteImmunization error: " . $conn->error);
-echo json_encode(["status" => "error", "message" => "Imeshindikana kufuta."]);
+echo json_encode(["status" => "error", "message" => "Failed to Delete."]);
 }
 $stmt->close();
 }
