@@ -89,7 +89,7 @@ $stmt->close();
 
 } elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 $id = intval($_POST['id'] ?? 0);
-$patient_id = generatePatientID($conn);
+$patient_id = trim($_POST['patient_id'] ?? '');
 $full_name         = trim($_POST['full_name'] ?? '');
 $dob               = trim($_POST['dob'] ?? '');
 $phone             = trim($_POST['phone'] ?? '');
