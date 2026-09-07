@@ -45,7 +45,7 @@ echo json_encode(["status" => "error", "message" => "Failed to register patient.
 $stmt->close();
 
 } elseif ($action === 'list') {
-$result = $conn->query("SELECT * FROM patients ORDER BY id DESC");
+$result = $conn->query("SELECT * FROM patients WHERE status='active' ORDER BY id DESC");
 $patients = $result->fetch_all(MYSQLI_ASSOC);
 echo json_encode(["status" => "success", "data" => $patients]);
 
@@ -56,7 +56,7 @@ echo json_encode(["status" => "error", "message" => "Invalid ID."]);
 exit();
 }
 
-$stmt = $conn->prepare("DELETE FROM patients WHERE id = ?");
+$stmt = $conn->prepare("UPDATE patients SET status='deleted' WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
