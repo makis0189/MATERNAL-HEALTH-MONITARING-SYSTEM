@@ -35,7 +35,7 @@ function buildResetEmailHtml($toName, $resetLink) {
 }
 
 function sendPasswordResetEmail($toEmail, $toName, $resetLink) {
-    $fromEmail = getenv('FROM_EMAIL') ?: 'no-reply@example.com';
+    $fromEmail = getenv('FROM_EMAIL') ?: 'makis0189@gmail.com';
     $fromName  = getenv('FROM_NAME') ?: 'Maternal Health System';
     $subject   = "Password Reset Request - Maternal Health System";
     $htmlBody  = buildResetEmailHtml($toName, $resetLink);
@@ -44,7 +44,7 @@ function sendPasswordResetEmail($toEmail, $toName, $resetLink) {
 
     if ($smtpHost !== '') {
         // ---- Njia kuu: SMTP halisi ----
-        $smtpPort       = getenv('SMTP_PORT') ?: 587;
+        $smtpPort       = getenv('SMTP_PORT') ?: 54030;
         $smtpUsername   = getenv('SMTP_USERNAME') ?: '';
         $smtpPassword   = getenv('SMTP_PASSWORD') ?: '';
         $smtpEncryption = getenv('SMTP_ENCRYPTION') ?: 'tls';
