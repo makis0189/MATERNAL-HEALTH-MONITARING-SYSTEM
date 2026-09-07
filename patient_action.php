@@ -2,7 +2,7 @@
 require_once __DIR__ . '/auth_helpers.php';
 header('Content-Type: application/json');
 require_once 'db.php';
-
+require_once 'patient_id.php';
 // Roles allowed to VIEW (list/get) patient records.
 $viewRoles  = ['Admin', 'Doctor', 'Nurse', 'CHW'];
 // Roles allowed to ADD/EDIT/DELETE patient records — Nurse only.
