@@ -226,7 +226,7 @@ $Highrisk_count= $high_row['total'];
 <input type="hidden" name="id">
 <div class="form-group">
 <label>Patient ID</label>
-<input type="text" name="patient_id" readonly>
+ <input type="text" id="patientId" name="patient_id" placeholder="e.g. MHS001" required>
 </div>
 <div class="form-group">
 <label>Full Name</label>
