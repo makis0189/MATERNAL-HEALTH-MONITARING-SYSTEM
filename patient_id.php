@@ -1,15 +1,9 @@
 function generatePatientID($conn) {
-    $query = "SELECT patient_id FROM patients ORDER BY id DESC LIMIT 1";
+    $query = "SELECT MAX(id) as max_id FROM patients";
     $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
 
-    if ($row = mysqli_fetch_assoc($result)) {
-        $last_id = $row['patient_id'];
-        $number = (int) substr($last_id, 3);
-        $number++;
-        $new_id = "MHS" . str_pad($number, 3, "0", STR_PAD_LEFT);
-    } else {
-        $new_id = "MHS001";
-    }
+    $number = ($row['max_id'] ?? 0) + 1;
 
-    return $new_id;
+    return "MHS" . str_pad($number, 3, "0", STR_PAD_LEFT);
 }
