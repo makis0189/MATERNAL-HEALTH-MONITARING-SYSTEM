@@ -20,7 +20,7 @@ requireRoleApi($writeRoles);
 }
 
 if ($action === 'create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-$patient_id        = trim($_POST['patient_id'] ?? '');
+$patient_id = generatePatientID($conn);
 $full_name         = trim($_POST['full_name'] ?? '');
 $dob               = trim($_POST['dob'] ?? '');
 $phone             = trim($_POST['phone'] ?? '');
@@ -29,7 +29,7 @@ $blood_group       = trim($_POST['blood_group'] ?? '');
 $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
 $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
-if ($patient_id === '' || $full_name === '' || $phone === '') {
+if ($full_name === '' || $phone === '') {
 echo json_encode(["status" => "error", "message" => "Please enter the patient ID, full name, and phone number."]);
 exit();
 }
@@ -89,7 +89,7 @@ $stmt->close();
 
 } elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 $id = intval($_POST['id'] ?? 0);
-$patient_id        = trim($_POST['patient_id'] ?? '');
+$patient_id = generatePatientID($conn);
 $full_name         = trim($_POST['full_name'] ?? '');
 $dob               = trim($_POST['dob'] ?? '');
 $phone             = trim($_POST['phone'] ?? '');
@@ -98,7 +98,7 @@ $blood_group       = trim($_POST['blood_group'] ?? '');
 $pregnancy_status  = trim($_POST['pregnancy_status'] ?? '');
 $emergency_contact = trim($_POST['emergency_contact'] ?? '');
 
-if ($id <= 0 || $patient_id === '' || $full_name === '' || $phone === '') {
+if ($id <= 0 || $full_name === '' || $phone === '') {
 echo json_encode(["status" => "error", "message" => "Please enter the patient ID, full name, and phone number."]);
 exit();
 }
